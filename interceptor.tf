@@ -17,10 +17,8 @@ resource "digitalocean_droplet" "interceptor" {
 
   provisioner "remote-exec" {
     inline = [
-      "export PATH=$PATH:/usr/bin",
-      # install wireguard
       "apt update",
-      "apt install -y wireguard iptables wireguard-tools"
+      "apt install -y iptables  wireguard wireguard-tools"
     ]
   }
 }
