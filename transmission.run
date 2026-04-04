@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+
+echo "Directory: $DIR"
+
+mkdir -p "$DIR/config" "$DIR/downloads" "$DIR/incomplete" "$DIR/watch"
+
+podman run -d \
+    --replace \
+    --restart unless-stopped \
+    --name transmission \
+    -p 9091:9091 \
+    -p 51413:51413 \
+    -p 51413:51413/udp \
+    -v "$DIR/config:/config" \
+    -v "$DIR/downloads:/downloads" \
+    -v "$DIR/incomplete:/incomplete" \
+    -v "$DIR/watch:/watch" \
+    transmission:4.0.4

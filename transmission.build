@@ -1,0 +1,7 @@
+#!/bin/bash
+
+podman build \
+  --build-arg TRANSMISSION_VERSION=4.0.4 \
+  -t transmission:4.0.4 \
+  -f Dockerfile \
+  .
