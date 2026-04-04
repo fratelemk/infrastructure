@@ -1,0 +1,46 @@
+---
+- name: deploy media server
+  hosts: all
+  tasks:
+    - name: install nvme dependencies
+      dnf:
+        name: nvme-cli
+        state: present
+
+    - name: read the drives csv file
+      read_csv:
+        path: drives.csv
+      register: drives
+      delegate_to: localhost
+
+    - name: display drives data
+      debug:
+        var: drives.list
+
+    - name: ensure drives exist
+      stat:
+        path: "{{ item.path }}"
+      loop: "{{ drives.list }}"
+
+    - name: format drives with 4096KB sector size
+      command: nvme format -f --lbaf=1 "{{ item.path }}"
+      loop: "{{ drives.list }}"
+
+    - name: read the users csv file
+      read_csv:
+        path: users.csv
+      register: users
+      delegate_to: localhost
+
+    - name: display users data
+      debug:
+        var: users.list
+
+    - name: create users from the csv
+      user:
+        name: "{{ item.name }}"
+        comment: "{{ item.comment }}"
+        create_home: "{{ item.create_home }}"
+        home: "{{ item.home }}"
+        state: present
+      loop: "{{ users.list }}"
